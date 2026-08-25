@@ -191,4 +191,32 @@ export const CHANNEL_OPTIONS = [
   },
 ];
 
+// 常用官方渠道的最小接入预设。密钥由管理员在弹窗中填写，不会写入前端代码。
+export const CHANNEL_PRESETS = [
+  {
+    id: 'openai',
+    label: 'OpenAI',
+    description: 'GPT-5、GPT-4.1 等模型',
+    type: 1,
+    base_url: 'https://api.openai.com',
+    models: ['gpt-5', 'gpt-5-mini', 'gpt-4.1'],
+  },
+  {
+    id: 'claude',
+    label: 'Anthropic Claude',
+    description: 'Claude Sonnet 4.5、Opus 4.1 等模型',
+    type: 14,
+    base_url: 'https://api.anthropic.com',
+    models: ['claude-sonnet-4-5-20250929', 'claude-opus-4-1-20250805'],
+  },
+  {
+    id: 'xai',
+    label: 'xAI / Grok',
+    description: 'Grok 4、Grok 3 等模型',
+    type: 48,
+    base_url: 'https://api.x.ai',
+    models: ['grok-4', 'grok-4-0709', 'grok-3-beta'],
+  },
+];
+
 export const MODEL_TABLE_PAGE_SIZE = 10;

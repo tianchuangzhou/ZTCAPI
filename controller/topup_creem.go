@@ -280,6 +280,16 @@ func CreemWebhook(c *gin.Context) {
 	}
 
 	log.Printf("Creem Webhook解析成功 - EventType: %s, EventId: %s", webhookEvent.EventType, webhookEvent.Id)
+	claimed, claimErr := model.BeginPaymentEvent("creem", webhookEvent.Id, webhookEvent.Object.RequestId)
+	if claimErr != nil {
+		log.Printf("Creem webhook事件记录失败: %v", claimErr)
+		c.AbortWithStatus(http.StatusServiceUnavailable)
+		return
+	}
+	if !claimed {
+		c.Status(http.StatusOK)
+		return
+	}
 
 	// 根据事件类型处理不同的webhook
 	switch webhookEvent.EventType {
@@ -289,6 +299,11 @@ func CreemWebhook(c *gin.Context) {
 		log.Printf("忽略Creem Webhook事件类型: %s", webhookEvent.EventType)
 		c.Status(http.StatusOK)
 	}
+	if c.IsAborted() {
+		model.FinishPaymentEvent("creem", webhookEvent.Id, model.PaymentEventFailed, "webhook处理失败")
+		return
+	}
+	model.FinishPaymentEvent("creem", webhookEvent.Id, model.PaymentEventProcessed, "")
 }
 
 // 处理支付完成事件

@@ -1,0 +1,25 @@
+# Render Blueprint — 一键部署 new-api 到免费 Web Service
+# 用法:在 Render 控制台 New > Blueprint,选择本仓库即可。
+# 说明:
+#  - runtime: docker 使用仓库根目录的 Dockerfile 构建
+#  - Render 会自动注入 PORT 环境变量,new-api 已在 main.go 读取 PORT
+#  - 免费实例使用临时磁盘,SQLite 数据在重启/休眠后丢失(见 DEPLOY.md)
+services:
+  - type: web
+    name: new-api
+    runtime: docker
+    plan: free
+    region: oregon            # 海外地域,可改为 frankfurt / singapore
+    healthCheckPath: /api/status
+    autoDeploy: true
+    envVars:
+      - key: SESSION_SECRET
+        sync: false
+        generateValue: true   # Render 首次部署时自动生成随机值(密钥不入库)
+      - key: CRYPTO_SECRET
+        sync: false
+        generateValue: true
+      - key: TZ
+        value: Asia/Shanghai
+      # 免费环境使用 SQLite(默认),无需设置 SQL_DSN / REDIS_CONN_STRING
+      # 支付不配置,无需任何 Stripe 密钥

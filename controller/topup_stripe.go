@@ -144,70 +144,90 @@ func StripeWebhook(c *gin.Context) {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
+	claimed, claimErr := model.BeginPaymentEvent("stripe", event.ID, event.GetObjectValue("client_reference_id"))
+	if claimErr != nil {
+		log.Printf("Stripe webhook事件记录失败: %v", claimErr)
+		c.AbortWithStatus(http.StatusServiceUnavailable)
+		return
+	}
+	if !claimed {
+		c.Status(http.StatusOK)
+		return
+	}
+	var processErr error
 
 	switch event.Type {
 	case stripe.EventTypeCheckoutSessionCompleted:
-		sessionCompleted(event)
+		processErr = sessionCompleted(event)
 	case stripe.EventTypeCheckoutSessionExpired:
-		sessionExpired(event)
+		processErr = sessionExpired(event)
 	default:
 		log.Printf("不支持的Stripe Webhook事件类型: %s\n", event.Type)
 	}
+	if processErr != nil {
+		model.FinishPaymentEvent("stripe", event.ID, model.PaymentEventFailed, processErr.Error())
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	model.FinishPaymentEvent("stripe", event.ID, model.PaymentEventProcessed, "")
 
 	c.Status(http.StatusOK)
 }
 
-func sessionCompleted(event stripe.Event) {
+func sessionCompleted(event stripe.Event) error {
 	customerId := event.GetObjectValue("customer")
 	referenceId := event.GetObjectValue("client_reference_id")
 	status := event.GetObjectValue("status")
 	if "complete" != status {
 		log.Println("错误的Stripe Checkout完成状态:", status, ",", referenceId)
-		return
+		return fmt.Errorf("checkout状态不是complete")
 	}
 
 	err := model.Recharge(referenceId, customerId)
 	if err != nil {
 		log.Println(err.Error(), referenceId)
-		return
+		return err
 	}
 
 	total, _ := strconv.ParseFloat(event.GetObjectValue("amount_total"), 64)
 	currency := strings.ToUpper(event.GetObjectValue("currency"))
 	log.Printf("收到款项：%s, %.2f(%s)", referenceId, total/100, currency)
+	return nil
 }
 
-func sessionExpired(event stripe.Event) {
+func sessionExpired(event stripe.Event) error {
 	referenceId := event.GetObjectValue("client_reference_id")
 	status := event.GetObjectValue("status")
 	if "expired" != status {
 		log.Println("错误的Stripe Checkout过期状态:", status, ",", referenceId)
-		return
+		return fmt.Errorf("checkout状态不是expired")
 	}
 
 	if len(referenceId) == 0 {
 		log.Println("未提供支付单号")
-		return
+		return fmt.Errorf("未提供支付单号")
 	}
 
 	topUp := model.GetTopUpByTradeNo(referenceId)
 	if topUp == nil {
 		log.Println("充值订单不存在", referenceId)
-		return
+		return fmt.Errorf("充值订单不存在")
 	}
 
 	if topUp.Status != common.TopUpStatusPending {
 		log.Println("充值订单状态错误", referenceId)
+		return nil
 	}
 
 	topUp.Status = common.TopUpStatusExpired
 	err := topUp.Update()
 	if err != nil {
 		log.Println("过期充值订单失败", referenceId, ", err:", err.Error())
-		return
+		return err
 	}
 
 	log.Println("充值订单已过期", referenceId)
+	return nil
 }
 
 func genStripeLink(referenceId string, customerId string, email string, amount int64) (string, error) {

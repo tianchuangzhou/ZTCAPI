@@ -929,8 +929,22 @@ const EditChannelModal = (props) => {
       let localModels = getChannelModels(inputs.type);
       setBasicModels(localModels);
       setInputs((inputs) => ({ ...inputs, models: localModels }));
+      const preset = props.editingChannel?.preset;
+      if (preset) {
+        const presetInputs = {
+          ...originInputs,
+          name: preset.label,
+          type: preset.type,
+          base_url: preset.base_url,
+          models: preset.models,
+          test_model: preset.models[0] || '',
+        };
+        setInputs(presetInputs);
+        setBasicModels(preset.models);
+        formApiRef.current?.setValues(presetInputs);
+      }
     }
-  }, [props.editingChannel.id]);
+  }, [props.editingChannel.id, props.editingChannel?.preset]);
 
   useEffect(() => {
     if (formApiRef.current) {

@@ -664,6 +664,129 @@ html:not(.dark) .blur-ball-teal {
   opacity: 0.2;
 }
 
+/* ==================== 模型渠道快速接入 ==================== */
+.channel-connect-hero {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 24px;
+  margin-bottom: 14px;
+  border: 1px solid var(--semi-color-border);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 82% 10%, rgba(59, 130, 246, 0.11), transparent 32%),
+    linear-gradient(135deg, var(--semi-color-bg-1), var(--semi-color-bg-0));
+  box-shadow: 0 10px 30px rgba(30, 64, 175, 0.06);
+}
+
+.channel-connect-intro {
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.channel-connect-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--semi-color-primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.channel-connect-presets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(190px, 1fr));
+  gap: 10px;
+  width: min(760px, 100%);
+}
+
+.channel-connect-preset {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px 13px;
+  border: 1px solid var(--semi-color-border);
+  border-radius: 10px;
+  color: var(--semi-color-text-0);
+  background: var(--semi-color-bg-0);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.channel-connect-preset:hover {
+  transform: translateY(-2px);
+  border-color: var(--semi-color-primary);
+  box-shadow: 0 8px 20px rgba(30, 64, 175, 0.11);
+}
+
+.channel-connect-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.channel-connect-logo-openai { background: #111827; }
+.channel-connect-logo-claude { background: #c2410c; }
+.channel-connect-logo-xai { background: #2563eb; }
+
+.channel-connect-preset-copy {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.channel-connect-preset-copy strong {
+  overflow: hidden;
+  font-size: 13px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.channel-connect-preset-copy small {
+  overflow: hidden;
+  color: var(--semi-color-text-2);
+  font-size: 11px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 900px) {
+  .channel-connect-hero {
+    flex-direction: column;
+  }
+
+  .channel-connect-presets {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .channel-connect-hero {
+    padding: 16px;
+  }
+
+  .channel-connect-presets {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ==================== 卡片马卡龙模糊球（类封装） ==================== */
 /* 使用方式：给容器加上 with-pastel-balls 类即可，无需在 JSX 中插入额外节点 */
 .with-pastel-balls {

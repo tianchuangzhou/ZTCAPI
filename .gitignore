@@ -27,3 +27,14 @@ data/
 .gomodcache/
 .gocache-temp
 .gopath
+
+# === 运行时数据与密钥(绝不入库) ===
+backups/
+*.db.backup*
+*.sha256
+*.db-wal
+*.db-shm
+.env.*
+!.env.example
+.secrets
+.secrets/

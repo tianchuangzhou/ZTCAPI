@@ -44,6 +44,9 @@ const TopUp = () => {
   const [userState, userDispatch] = useContext(UserContext);
   const [statusState] = useContext(StatusContext);
 
+  const showInvitation =
+    statusState?.status && statusState.status.register_enabled !== false;
+
   const [redemptionCode, setRedemptionCode] = useState('');
   const [amount, setAmount] = useState(0.0);
   const [minTopUp, setMinTopUp] = useState(statusState?.status?.min_topup || 1);
@@ -706,16 +709,18 @@ const TopUp = () => {
           </div>
 
           {/* 右侧信息区域 */}
-          <div className='lg:col-span-5'>
-            <InvitationCard
-              t={t}
-              userState={userState}
-              renderQuota={renderQuota}
-              setOpenTransfer={setOpenTransfer}
-              affLink={affLink}
-              handleAffLinkClick={handleAffLinkClick}
-            />
-          </div>
+          {showInvitation && (
+            <div className='lg:col-span-5'>
+              <InvitationCard
+                t={t}
+                userState={userState}
+                renderQuota={renderQuota}
+                setOpenTransfer={setOpenTransfer}
+                affLink={affLink}
+                handleAffLinkClick={handleAffLinkClick}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

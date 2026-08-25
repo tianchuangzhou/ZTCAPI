@@ -18,8 +18,8 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React from 'react';
-import { Banner } from '@douyinfe/semi-ui';
-import { IconAlertTriangle } from '@douyinfe/semi-icons';
+import { Banner, Typography } from '@douyinfe/semi-ui';
+import { IconAlertTriangle, IconArrowRight, IconBolt } from '@douyinfe/semi-icons';
 import CardPro from '../../common/ui/CardPro';
 import ChannelsTable from './ChannelsTable';
 import ChannelsActions from './ChannelsActions';
@@ -34,6 +34,7 @@ import EditChannelModal from './modals/EditChannelModal';
 import EditTagModal from './modals/EditTagModal';
 import MultiKeyManageModal from './modals/MultiKeyManageModal';
 import { createCardProPagination } from '../../../helpers/utils';
+import { CHANNEL_PRESETS } from '../../../constants/channel.constants';
 
 const ChannelsPage = () => {
   const channelsData = useChannelsData();
@@ -81,6 +82,35 @@ const ChannelsPage = () => {
           style={{ marginBottom: 12 }}
         />
       ) : null}
+      <div className='channel-connect-hero'>
+        <div className='channel-connect-intro'>
+          <div className='channel-connect-kicker'><IconBolt size={15} /> 快速接入模型</div>
+          <Typography.Title heading={3} className='!mb-1'>把常用模型接入到同一个 API</Typography.Title>
+          <Typography.Text type='tertiary'>选择官方预设，填写 API Key 后即可用统一的 OpenAI 格式调用。</Typography.Text>
+        </div>
+        <div className='channel-connect-presets'>
+          {CHANNEL_PRESETS.map((preset) => (
+            <button
+              type='button'
+              className='channel-connect-preset'
+              key={preset.id}
+              onClick={() => {
+                channelsData.setEditingChannel({ id: undefined, preset });
+                channelsData.setShowEdit(true);
+              }}
+            >
+              <span className={`channel-connect-logo channel-connect-logo-${preset.id}`}>
+                {preset.id === 'openai' ? 'AI' : preset.id === 'claude' ? 'A' : 'x'}
+              </span>
+              <span className='channel-connect-preset-copy'>
+                <strong>{preset.label}</strong>
+                <small>{preset.description}</small>
+              </span>
+              <IconArrowRight size={16} />
+            </button>
+          ))}
+        </div>
+      </div>
       <CardPro
         type='type3'
         tabsArea={<ChannelsTabs {...channelsData} />}

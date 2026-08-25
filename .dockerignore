@@ -8,3 +8,20 @@ docs
 .eslintcache
 .gocache
 /web/node_modules
+
+# === 运行时数据与密钥(绝不进入构建上下文) ===
+data/
+logs/
+backups/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.db.backup*
+*.sha256
+.env
+.env.*
+!.env.example
+.secrets
+.secrets/
+one-api.db

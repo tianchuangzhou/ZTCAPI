@@ -30,6 +30,8 @@ import AnnouncementsPanel from './AnnouncementsPanel';
 import FaqPanel from './FaqPanel';
 import UptimePanel from './UptimePanel';
 import SearchModal from './modals/SearchModal';
+import ProductionReadinessPanel from './ProductionReadinessPanel';
+import OperationsReportPanel from './OperationsReportPanel';
 
 import { useDashboardData } from '../../hooks/dashboard/useDashboardData';
 import { useDashboardStats } from '../../hooks/dashboard/useDashboardStats';
@@ -169,6 +171,13 @@ const Dashboard = () => {
         CARD_PROPS={CARD_PROPS}
         CHART_CONFIG={CHART_CONFIG}
       />
+
+      <ProductionReadinessPanel
+        isAdminUser={dashboardData.isAdminUser}
+        t={dashboardData.t}
+      />
+
+      <OperationsReportPanel isAdminUser={dashboardData.isAdminUser} />
 
       {/* API信息和图表面板 */}
       <div className='mb-4'>

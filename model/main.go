@@ -259,6 +259,8 @@ func migrateDB() error {
 		&Log{},
 		&Midjourney{},
 		&TopUp{},
+		&PaymentEvent{},
+		&PaymentRefund{},
 		&QuotaData{},
 		&Task{},
 		&Model{},
@@ -268,6 +270,8 @@ func migrateDB() error {
 		&TwoFA{},
 		&TwoFABackupCode{},
 		&Checkin{},
+		&Post{},
+		&Like{},
 	)
 	if err != nil {
 		return err
@@ -293,6 +297,8 @@ func migrateDBFast() error {
 		{&Log{}, "Log"},
 		{&Midjourney{}, "Midjourney"},
 		{&TopUp{}, "TopUp"},
+		{&PaymentEvent{}, "PaymentEvent"},
+		{&PaymentRefund{}, "PaymentRefund"},
 		{&QuotaData{}, "QuotaData"},
 		{&Task{}, "Task"},
 		{&Model{}, "Model"},

@@ -19,6 +19,15 @@ func SetApiRouter(router *gin.Engine) {
 		apiRouter.GET("/uptime/status", controller.GetUptimeKumaStatus)
 		apiRouter.GET("/models", middleware.UserAuth(), controller.DashboardListModels)
 		apiRouter.GET("/status/test", middleware.AdminAuth(), controller.TestStatus)
+		apiRouter.GET("/production/readiness", middleware.RootAuth(), controller.GetProductionReadiness)
+		paymentRoute := apiRouter.Group("/payment")
+		paymentRoute.Use(middleware.AdminAuth())
+		{
+			paymentRoute.GET("/reconciliation", controller.GetPaymentReconciliation)
+			paymentRoute.POST("/refund/request", middleware.CriticalRateLimit(), controller.RequestPaymentRefund)
+			paymentRoute.POST("/refund/complete", middleware.CriticalRateLimit(), controller.CompletePaymentRefund)
+		}
+		apiRouter.GET("/operations/report", middleware.AdminAuth(), controller.GetOperationsReport)
 		apiRouter.GET("/notice", controller.GetNotice)
 		apiRouter.GET("/user-agreement", controller.GetUserAgreement)
 		apiRouter.GET("/privacy-policy", controller.GetPrivacyPolicy)
@@ -296,5 +305,20 @@ func SetApiRouter(router *gin.Engine) {
 			deploymentsRoute.POST("/:id/extend", controller.ExtendDeployment)
 			deploymentsRoute.DELETE("/:id", controller.DeleteDeployment)
 		}
+	}
+
+	// Community routes
+	communityRoute := apiRouter.Group("/community")
+	{
+		communityRoute.GET("/posts", middleware.TryUserAuth(), controller.GetPosts)
+		communityRoute.POST("/posts", middleware.UserAuth(), controller.CreatePost)
+		communityRoute.GET("/posts/:id", middleware.TryUserAuth(), controller.GetPost)
+		communityRoute.DELETE("/posts/:id", middleware.UserAuth(), controller.DeletePost)
+		communityRoute.GET("/posts/:id/replies", middleware.TryUserAuth(), controller.GetPostReplies)
+		communityRoute.POST("/posts/:id/like", middleware.UserAuth(), controller.ToggleLike)
+		communityRoute.GET("/users/:id", middleware.TryUserAuth(), controller.GetUserProfile)
+		communityRoute.GET("/users/:id/posts", middleware.TryUserAuth(), controller.GetUserPosts)
+		communityRoute.GET("/masks", middleware.TryUserAuth(), controller.GetCommunityMasks)
+		communityRoute.GET("/masks/:id/posts", middleware.TryUserAuth(), controller.GetMaskPosts)
 	}
 }
