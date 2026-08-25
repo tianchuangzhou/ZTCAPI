@@ -14,10 +14,8 @@ services:
     autoDeploy: true
     envVars:
       - key: SESSION_SECRET
-        sync: false
         generateValue: true   # Render 首次部署时自动生成随机值(密钥不入库)
       - key: CRYPTO_SECRET
-        sync: false
         generateValue: true
       - key: TZ
         value: Asia/Shanghai
